@@ -12,6 +12,8 @@ public:
     int xPos {0};
     int yPos {0};
     Color backgroundColor {GetColor(0x808080FF)};
+    bool outline {true};
+    Color outlineColor {GetColor(0x000000FF)};
     int textSize {8};
     Color textColor {GetColor(0xFFFFFFFF)};
     std::string text {"Change me!"};

@@ -57,13 +57,18 @@ void EngineApplication::process() {
                     currentButton.backgroundColor);
             }
             
+            // Drawing outline should only be after drawing the rectangle so it would be on the top
+            if (currentButton.outline) {
+                DrawRectangleLines(currentButton.xPos, currentButton.yPos, currentButton.width, currentButton.height, currentButton.outlineColor);
+            }
+            
             DrawTextEx(defaultFont, currentButton.text.c_str(),
             Vector2 {
                                 .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos,
                                 .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos
                               },
             buttonFontSize, 0.f, currentButton.textColor);
-            
+
             // Create bold effect by create text dublicate 0.5pixels to the right
             if (currentButton.textBold) {
                 DrawTextEx(defaultFont, currentButton.text.c_str(),
