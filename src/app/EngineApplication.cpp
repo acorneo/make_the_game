@@ -15,15 +15,9 @@ void EngineApplication::init() {
     }
 
     /* Just to test */
-    Button btn {
-        .width = 100,
-        .height = 40,
-        .xPos = 50,
-        .yPos = 50,
-        .backgroundColor = GetColor(0xFFFF00FF),
-        .textColor = GetColor(0x000000FF),
-        .text = "Example text"
-    };
+    Button btn {};
+    btn.width = 100;
+    btn.textBold = true;
 
     buttons_pipeline.push_back(btn);
 }
@@ -35,15 +29,50 @@ void EngineApplication::process() {
 
         for (Button currentButton : buttons_pipeline) {
             int buttonFontSize = 16;
-
             Vector2 buttonTextSize = MeasureTextEx(defaultFont, currentButton.text.c_str(), buttonFontSize, 0.f);
-
-            DrawRectangle(currentButton.xPos, currentButton.yPos,
-                currentButton.width, currentButton.height,
-                currentButton.backgroundColor);
             
-            // void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
-            DrawTextEx(defaultFont, currentButton.text.c_str(), Vector2 {.x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos, .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos}, buttonFontSize, 0.f, currentButton.textColor);
+            bool hovered = (GetMouseX() >= currentButton.xPos &&
+                            GetMouseX() <= currentButton.xPos + currentButton.width &&
+                            GetMouseY() >= currentButton.yPos &&
+                            GetMouseY() <= currentButton.yPos + currentButton.height);
+            
+            bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+
+            if (hovered) {
+                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+            } else {
+                SetMouseCursor(MOUSE_CURSOR_ARROW);
+            }
+
+            if (mouseDown) {
+                    Color hoverColor = currentButton.backgroundColor;
+                    hoverColor.a = 0xEE;
+                    DrawRectangle(currentButton.xPos, currentButton.yPos,
+                        currentButton.width, currentButton.height,
+                        hoverColor);
+            }
+            else {
+                DrawRectangle(currentButton.xPos, currentButton.yPos,
+                    currentButton.width, currentButton.height,
+                    currentButton.backgroundColor);
+            }
+            
+            DrawTextEx(defaultFont, currentButton.text.c_str(),
+            Vector2 {
+                                .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos,
+                                .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos
+                              },
+            buttonFontSize, 0.f, currentButton.textColor);
+            
+            // Create bold effect by create text dublicate 0.5pixels to the right
+            if (currentButton.textBold) {
+                DrawTextEx(defaultFont, currentButton.text.c_str(),
+                Vector2 {
+                                    .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos + 0.5f,
+                                    .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos
+                                },
+                buttonFontSize, 0.f, currentButton.textColor);
+            }
         }
 
         EndDrawing();
