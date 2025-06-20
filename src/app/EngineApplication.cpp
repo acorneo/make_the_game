@@ -4,7 +4,10 @@
 #include <iostream>
 
 void EngineApplication::init() {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
     InitWindow(800, 600, "make the game!");
+    MaximizeWindow();
     SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
     
     defaultFont = LoadFontEx("fonts/Roboto.ttf", 32, NULL, 0);
@@ -79,6 +82,8 @@ void EngineApplication::process() {
                 buttonFontSize, 0.f, currentButton.textColor);
             }
         }
+
+        DrawFPS(GetScreenWidth()-100, GetScreenHeight()-100);
 
         EndDrawing();
     }
