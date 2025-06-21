@@ -10,7 +10,7 @@ void EngineApplication::init() {
     MaximizeWindow();
     SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
     
-    defaultFont = LoadFontEx("fonts/Roboto.ttf", 32, NULL, 0);
+    defaultFont = LoadFontEx("fonts/GNF.ttf", 32, NULL, 0);
     SetTextureFilter(defaultFont.texture, TEXTURE_FILTER_BILINEAR);
 
     if (!IsFontValid(defaultFont)) {
@@ -18,7 +18,9 @@ void EngineApplication::init() {
     }
 
     /* Just to test */
-    Button btn {};
+    UI::Button btn {};
+    btn.xPos = 100;
+    btn.yPos = 100;
     btn.width = 100;
     btn.textBold = true;
 
@@ -30,7 +32,7 @@ void EngineApplication::process() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        for (Button currentButton : buttons_pipeline) {
+        for (UI::Button currentButton : buttons_pipeline) {
             int buttonFontSize = 16;
             Vector2 buttonTextSize = MeasureTextEx(defaultFont, currentButton.text.c_str(), buttonFontSize, 0.f);
             
@@ -47,9 +49,9 @@ void EngineApplication::process() {
                 SetMouseCursor(MOUSE_CURSOR_ARROW);
             }
 
-            if (mouseDown) {
+            if (mouseDown && hovered) {
                     Color hoverColor = currentButton.backgroundColor;
-                    hoverColor.a = 0xEE;
+                    hoverColor.a = 0x99;
                     DrawRectangle(currentButton.xPos, currentButton.yPos,
                         currentButton.width, currentButton.height,
                         hoverColor);
@@ -60,11 +62,14 @@ void EngineApplication::process() {
                     currentButton.backgroundColor);
             }
             
-            // Drawing outline should only be after drawing the rectangle so it would be on the top
             if (currentButton.outline) {
-                DrawRectangleLines(currentButton.xPos, currentButton.yPos, currentButton.width, currentButton.height, currentButton.outlineColor);
+                // And now draw pixel effect
+                DrawRectangle(currentButton.xPos-3, currentButton.yPos, 3, currentButton.height, currentButton.outlineColor);
+                DrawRectangle(currentButton.xPos + currentButton.width, currentButton.yPos, 3, currentButton.height, currentButton.outlineColor);
+                DrawRectangle(currentButton.xPos, currentButton.yPos-3, currentButton.width, 3, currentButton.outlineColor);
+                DrawRectangle(currentButton.xPos, currentButton.yPos+currentButton.height, currentButton.width, 3, currentButton.outlineColor);
             }
-            
+
             DrawTextEx(defaultFont, currentButton.text.c_str(),
             Vector2 {
                                 .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos,
