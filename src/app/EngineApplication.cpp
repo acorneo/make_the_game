@@ -1,4 +1,4 @@
-#include "EngineApplication.h"
+#include "EngineApplication.hpp"
 #include "raylib.h"
 
 #include <iostream>
@@ -18,13 +18,10 @@ void EngineApplication::init() {
     }
 
     /* Just to test */
-    UI::Button btn {};
-    btn.xPos = 100;
-    btn.yPos = 100;
-    btn.width = 100;
-    btn.textBold = true;
-
-    buttons_pipeline.push_back(btn);
+    UI::Line line{
+        .xStartPos = 0, .yStartPos = 0, .xEndPos = 200, .yEndPos = 200,
+    };
+    lines_pipeline.push_back(line);
 }
 
 void EngineApplication::process() {
@@ -32,62 +29,11 @@ void EngineApplication::process() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
-        for (UI::Button currentButton : buttons_pipeline) {
-            int buttonFontSize = 16;
-            Vector2 buttonTextSize = MeasureTextEx(defaultFont, currentButton.text.c_str(), buttonFontSize, 0.f);
-            
-            bool hovered = (GetMouseX() >= currentButton.xPos &&
-                            GetMouseX() <= currentButton.xPos + currentButton.width &&
-                            GetMouseY() >= currentButton.yPos &&
-                            GetMouseY() <= currentButton.yPos + currentButton.height);
-            
-            bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
-
-            if (hovered) {
-                SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-            } else {
-                SetMouseCursor(MOUSE_CURSOR_ARROW);
-            }
-
-            if (mouseDown && hovered) {
-                    Color hoverColor = currentButton.backgroundColor;
-                    hoverColor.a = 0x99;
-                    DrawRectangle(currentButton.xPos, currentButton.yPos,
-                        currentButton.width, currentButton.height,
-                        hoverColor);
-            }
-            else {
-                DrawRectangle(currentButton.xPos, currentButton.yPos,
-                    currentButton.width, currentButton.height,
-                    currentButton.backgroundColor);
-            }
-            
-            if (currentButton.outline) {
-                // And now draw pixel effect
-                DrawRectangle(currentButton.xPos-3, currentButton.yPos, 3, currentButton.height, currentButton.outlineColor);
-                DrawRectangle(currentButton.xPos + currentButton.width, currentButton.yPos, 3, currentButton.height, currentButton.outlineColor);
-                DrawRectangle(currentButton.xPos, currentButton.yPos-3, currentButton.width, 3, currentButton.outlineColor);
-                DrawRectangle(currentButton.xPos, currentButton.yPos+currentButton.height, currentButton.width, 3, currentButton.outlineColor);
-            }
-
-            DrawTextEx(defaultFont, currentButton.text.c_str(),
-            Vector2 {
-                                .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos,
-                                .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos
-                              },
-            buttonFontSize, 0.f, currentButton.textColor);
-
-            // Create bold effect by create text dublicate 0.5pixels to the right
-            if (currentButton.textBold) {
-                DrawTextEx(defaultFont, currentButton.text.c_str(),
-                Vector2 {
-                                    .x = (float)(currentButton.width-buttonTextSize.x) / 2 + currentButton.xPos + 0.5f,
-                                    .y = (float)(currentButton.height - buttonTextSize.y) / 2 + currentButton.yPos
-                                },
-                buttonFontSize, 0.f, currentButton.textColor);
-            }
+        // 5 layers overall
+        for (int i = 0; i < 5; i++) {
+            renderButtons(i);
+            renderLines(i);
         }
-
         DrawFPS(GetScreenWidth()-100, GetScreenHeight()-100);
 
         EndDrawing();

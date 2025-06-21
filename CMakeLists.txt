@@ -7,10 +7,12 @@ file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR})
 add_executable(${PROJECT_NAME}
         src/main.cpp
 
-        src/app/EngineApplication.h
+        src/app/EngineApplication.hpp
         src/app/EngineApplication.cpp
 
-        src/app/ui/Button.h
+        src/app/ui/Button.hpp
+        src/app/ui/Line.hpp
+        src/app/EngineRenderer.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)

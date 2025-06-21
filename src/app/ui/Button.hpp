@@ -26,5 +26,7 @@ namespace UI {
         std::string text {"Change me!"};
         bool textBold {false};
         std::function<void> *callback;
+
+        int zIndex{0};
     };
 };
